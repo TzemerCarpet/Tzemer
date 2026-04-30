@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>צמר שטיחים יפים — מחשבון מחיר</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f0e0d;--surface:#1a1815;--surface2:#232018;--border:#2e2a22;--gold:#c9a84c;--gold-light:#e8c870;--gold-dim:#7a6330;--text:#f0ead8;--text-muted:#8a7f6a;--text-dim:#554e3e;--accent:#d4763b;--green:#4caf74;--radius:14px;--radius-sm:8px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;direction:rtl;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 20% 10%,rgba(201,168,76,.06) 0%,transparent 60%),radial-gradient(ellipse 40% 60% at 80% 90%,rgba(212,118,59,.05) 0%,transparent 60%);pointer-events:none;z-index:0}
+.wrapper{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:32px 16px 80px}
+.header{text-align:center;margin-bottom:36px}
+.logo-wrap{display:inline-flex;align-items:center;gap:14px;margin-bottom:16px}
+.logo-img{height:56px;width:auto;filter:drop-shadow(0 4px 16px rgba(201,168,76,.3))}
+.logo-fallback{display:none;width:52px;height:52px;background:linear-gradient(135deg,#c9a84c,#d4763b);border-radius:14px;align-items:center;justify-content:center;font-size:26px}
+.logo-text h1{font-size:24px;font-weight:800;background:linear-gradient(135deg,var(--gold-light),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:right}
+.logo-text p{font-size:13px;color:var(--text-muted);text-align:right}
+.header-divider{height:1px;background:linear-gradient(90deg,transparent,var(--gold-dim),transparent);max-width:440px;margin:0 auto}
+.tabs{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:50px;padding:4px;margin-bottom:28px;gap:4px}
+.tab-btn{flex:1;padding:11px;border:none;background:transparent;color:var(--text-muted);font-family:'Heebo',sans-serif;font-size:15px;font-weight:600;border-radius:46px;cursor:pointer;transition:all .25s}
+.tab-btn.active{background:linear-gradient(135deg,var(--gold),#a8782a);color:#0f0e0d;box-shadow:0 4px 20px rgba(201,168,76,.35)}
+.tab-btn:not(.active):hover{color:var(--text);background:var(--surface2)}
+.section{display:none}.section.active{display:block}
+.carpet-list{display:flex;flex-direction:column;gap:18px}
+.carpet-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;position:relative;transition:border-color .2s;animation:slideIn .3s ease}
+.carpet-card:hover{border-color:var(--gold-dim)}
+@keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.carpet-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.carpet-num{font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px}
+.remove-btn{width:28px;height:28px;border:1px solid var(--border);background:transparent;color:var(--text-muted);border-radius:50%;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.remove-btn:hover{border-color:#c0392b;color:#c0392b;background:rgba(192,57,43,.1)}
+.dims-preview-row{display:grid;grid-template-columns:1fr 110px;gap:14px;margin-bottom:18px;align-items:start}
+.dims-inputs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:5px;letter-spacing:.5px}
+.field input[type="number"]{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Heebo',sans-serif;font-size:16px;font-weight:700;padding:10px 12px;outline:none;transition:border-color .2s,box-shadow .2s}
+.field input:focus{border-color:var(--gold-dim);box-shadow:0 0 0 3px rgba(201,168,76,.12)}
+.area-info{grid-column:1/-1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;text-align:center;margin-top:8px}
+.area-val{font-size:18px;font-weight:800;color:var(--gold)}.area-lbl{font-size:10px;color:var(--text-muted);display:block}
+.carpet-preview{display:flex;flex-direction:column;align-items:center;gap:6px}
+.preview-box{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px;display:flex;align-items:center;justify-content:center;min-height:86px}
+.preview-label{font-size:10px;color:var(--text-dim);text-align:center}
+.type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.type-opt{position:relative}.type-opt input{position:absolute;opacity:0;width:0;height:0}
+.type-opt label{display:block;padding:10px 8px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;text-align:center;transition:all .2s}
+.type-name{font-size:12px;font-weight:600;color:var(--text-muted);display:block}
+.type-price{font-size:11px;color:var(--text-dim);display:block;margin-top:2px}
+.type-opt input:checked+label{border-color:var(--gold);background:rgba(201,168,76,.1)}
+.type-opt input:checked+label .type-name{color:var(--gold-light)}
+.type-opt input:checked+label .type-price{color:var(--gold)}
+.services-title{font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:.5px;margin-bottom:8px}
+.services-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px}
+.svc-opt{position:relative}.svc-opt input{position:absolute;opacity:0;width:0;height:0}
+.svc-opt label{display:flex;align-items:center;gap:8px;padding:9px 11px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .2s}
+.svc-opt input:checked+label{border-color:var(--gold-dim);background:rgba(201,168,76,.07)}
+.chk{width:17px;height:17px;border:1.5px solid var(--border);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent;transition:all .2s}
+.svc-opt input:checked+label .chk{background:var(--gold);border-color:var(--gold);color:#000}
+.svc-name{font-size:12px;font-weight:500;color:var(--text);display:block}
+.svc-price-lbl{font-size:10px;color:var(--text-muted);display:block}
+.card-subtotal{background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(212,118,59,.05));border:1px solid var(--gold-dim);border-radius:var(--radius-sm);padding:11px 14px;display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+.card-subtotal-label{font-size:12px;color:var(--text-muted)}.card-subtotal-amount{font-size:20px;font-weight:800;color:var(--gold-light)}
+.add-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;background:transparent;border:1.5px dashed var(--border);border-radius:var(--radius);color:var(--text-muted);font-family:'Heebo',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:4px}
+.add-btn:hover{border-color:var(--gold-dim);color:var(--gold)}
+.delivery-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-top:18px}
+.delivery-section h3{font-size:12px;font-weight:700;color:var(--text-muted);letter-spacing:.5px;margin-bottom:14px}
+.delivery-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.delivery-opt{position:relative}.delivery-opt input{position:absolute;opacity:0}
+.delivery-opt label{display:flex;align-items:center;gap:10px;padding:13px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .2s}
+.delivery-opt input:checked+label{border-color:var(--gold);background:rgba(201,168,76,.1)}
+.delivery-icon{font-size:20px}.delivery-name{font-size:13px;font-weight:600;color:var(--text);display:block}.delivery-desc{font-size:11px;color:var(--text-muted);display:block}
+.branch-row{display:none;margin-top:10px}.branch-row.visible{display:block}
+.branch-row>label{font-size:11px;color:var(--text-muted);font-weight:700;display:block;margin-bottom:6px}
+.branch-row select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Heebo',sans-serif;font-size:14px;padding:10px 12px;outline:none;appearance:none;cursor:pointer;transition:border-color .2s}
+.branch-row select:focus{border-color:var(--gold-dim)}
+.branch-detail{margin-top:10px;padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;color:var(--text-muted);line-height:1.7;display:none}
+.branch-detail.visible{display:block}.branch-detail strong{color:var(--text);display:block;margin-bottom:2px}
+.total-panel{margin-top:20px;background:linear-gradient(135deg,#1f1c14,#181510);border:1px solid var(--gold-dim);border-radius:var(--radius);padding:24px;box-shadow:0 12px 48px rgba(0,0,0,.4),inset 0 1px 0 rgba(201,168,76,.2)}
+.total-rows{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.total-row{display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.total-row .tr-label{color:var(--text-muted)}.total-row .tr-val{color:var(--text);font-weight:600}
+.total-row.disc-row .tr-val{color:var(--green)}.total-row.del-row .tr-val{color:var(--accent)}
+.total-divider{height:1px;background:linear-gradient(90deg,transparent,var(--gold-dim),transparent);margin:4px 0}
+.total-main{display:flex;justify-content:space-between;align-items:baseline}
+.total-main-label{font-size:15px;font-weight:700;color:var(--text)}
+.total-main-amount{font-size:36px;font-weight:800;background:linear-gradient(135deg,var(--gold-light),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px}
+.total-vat{font-size:11px;color:var(--text-dim);text-align:left;margin-top:3px}
+.min-notice{display:none;margin-top:10px;padding:10px 14px;background:rgba(212,118,59,.1);border:1px solid rgba(212,118,59,.35);border-radius:var(--radius-sm);font-size:12px;color:var(--accent)}
+.min-notice.visible{display:block}
+.action-row{display:grid;grid-template-columns:1fr;gap:10px;margin-top:16px}
+.print-btn{padding:12px;border:1px solid var(--border);border-radius:var(--radius);background:transparent;color:var(--text-muted);font-family:'Heebo',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;width:100%}
+.print-btn:hover{border-color:var(--text-dim);color:var(--text)}
+.summary-note{font-size:11px;color:var(--text-dim);text-align:center;margin-top:10px}
+/* repair */
+.repair-list{display:flex;flex-direction:column;gap:16px}
+.repair-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;animation:slideIn .3s ease}
+.repair-services{display:flex;flex-direction:column;gap:7px}
+.rsvc-category{font-size:10px;font-weight:700;color:var(--text-dim);letter-spacing:1.5px;text-transform:uppercase;padding:10px 0 5px;border-top:1px solid var(--border)}
+.rsvc-category:first-child{border-top:none;padding-top:0}
+.rsvc-opt{position:relative}.rsvc-opt input{position:absolute;opacity:0}
+.rsvc-opt label{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;gap:10px}
+.rsvc-opt input:checked+label{border-color:var(--accent);background:rgba(212,118,59,.08)}
+.rsvc-left{display:flex;align-items:center;gap:8px}
+.rsvc-check{width:17px;height:17px;border:1.5px solid var(--border);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent;transition:all .2s}
+.rsvc-opt input:checked+label .rsvc-check{background:var(--accent);border-color:var(--accent);color:#fff}
+.rsvc-name{font-size:12px;color:var(--text);font-weight:500}
+.rsvc-price-badge{font-size:11px;color:var(--text-muted);background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:2px 7px;white-space:nowrap;flex-shrink:0}
+.rsvc-opt input:checked+label .rsvc-price-badge{color:var(--accent);border-color:var(--accent)}
+/* ── SIDE SELECTOR ── */
+.side-selector{margin:8px 0 4px;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);display:none}
+.side-selector.visible{display:block}
+.side-sel-title{font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:.5px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.side-sel-title span{color:var(--text-dim);font-weight:400}
+.sides-grid{display:grid;gap:5px}
+.sides-grid.four{grid-template-columns:1fr 1fr 1fr 1fr}
+.sides-grid.two{grid-template-columns:1fr 1fr}
+.side-btn{padding:6px 4px;background:var(--surface);border:1px solid var(--border);border-radius:6px;cursor:pointer;text-align:center;transition:all .2s;font-size:11px;font-weight:600;color:var(--text-muted)}
+.side-btn.active{border-color:var(--accent);background:rgba(212,118,59,.12);color:var(--accent)}
+.side-btn .sb-len{font-size:10px;color:var(--text-dim);display:block;font-weight:400;margin-top:1px}
+.side-total-note{font-size:10px;color:var(--text-dim);margin-top:6px;text-align:left}
+
+.repair-card-subtotal{background:linear-gradient(135deg,rgba(212,118,59,.08),rgba(212,118,59,.04));border:1px solid rgba(212,118,59,.35);border-radius:var(--radius-sm);padding:11px 14px;display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+.cs-label{font-size:12px;color:var(--text-muted)}.cs-amt{font-size:20px;font-weight:800;color:var(--accent)}
+/* print */
+.print-header{display:none}
+@media print{
+  body{background:#fff!important;color:#000!important}body::before{display:none}
+  .tabs,.add-btn,.action-row,.summary-note,.delivery-section,.remove-btn{display:none!important}
+  .carpet-card,.repair-card,.total-panel{border:1px solid #ccc!important;background:#fff!important;box-shadow:none!important;break-inside:avoid;color:#000!important}
+  .section{display:block!important}.print-header{display:flex!important;justify-content:space-between;align-items:center;padding:0 0 16px;border-bottom:2px solid #c9a84c;margin-bottom:20px}
+  .total-main-amount{-webkit-text-fill-color:#000!important;font-size:28px!important}
+  .carpet-num,.total-main-label,.card-subtotal-label,.total-row .tr-label{color:#666!important}
+  .card-subtotal,.repair-card-subtotal{background:#f5f5f5!important}
+  .area-val,.card-subtotal-amount{color:#c9a84c!important}
+}
+@media(max-width:600px){
+  .type-grid{grid-template-columns:1fr 1fr}.services-grid{grid-template-columns:1fr}
+  .dims-preview-row{grid-template-columns:1fr}.carpet-preview{display:none}
+  .delivery-grid{grid-template-columns:1fr}.action-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<!-- PRINT HEADER -->
+<div class="print-header">
+  <div><div style="font-size:20px;font-weight:800;color:#c9a84c">צמר שטיחים יפים</div><div style="font-size:12px;color:#666">הצעת מחיר לניקוי / תיקון שטיחים</div></div>
+  <div style="font-size:12px;color:#666;text-align:left"><div>📞 1-800-700-080</div><div>🌐 tzemer.co.il</div><div id="print-date"></div></div>
+</div>
+
+<!-- HEADER -->
+<header class="header">
+  <a href="https://tzemer.co.il" target="_blank" style="text-decoration:none;color:inherit">
+  <div class="logo-wrap" style="cursor:pointer">
+    <img src="data:image/webp;base64,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" alt="צמר שטיחים יפים" style="height:56px;width:auto;filter:drop-shadow(0 4px 16px rgba(201,168,76,.3));flex-shrink:0">
+    <div class="logo-text"><h1>צמר שטיחים יפים</h1><p>מחשבון מחיר לניקוי ותיקון שטיחים</p></div>
+  </div>
+  </a>
+  <div class="header-divider"></div>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('cleaning')">🧼 ניקוי שטיחים</button>
+  <button class="tab-btn" onclick="switchTab('repair')">🔧 תיקון שטיחים</button>
+</div>
+
+<!-- ═══ CLEANING ═══ -->
+<div id="cleaning" class="section active">
+  <div class="carpet-list" id="cleaning-list"></div>
+  <button class="add-btn" onclick="addCarpet('c')"><span style="font-size:18px;font-weight:300">+</span> הוסף שטיח</button>
+
+  <div class="delivery-section">
+    <h3>סוג שירות</h3>
+    <div class="delivery-grid">
+      <div class="delivery-opt"><input type="radio" name="c-del" id="c-self" checked onchange="updateDelivery('c')"><label for="c-self"><span class="delivery-icon">🏪</span><span><span class="delivery-name">איסוף עצמי</span><span class="delivery-desc">מהסניף שלנו</span></span></label></div>
+      <div class="delivery-opt"><input type="radio" name="c-del" id="c-home" onchange="updateDelivery('c')"><label for="c-home"><span class="delivery-icon">🚚</span><span><span class="delivery-name">שירות עד הבית</span><span class="delivery-desc">איסוף + החזרה</span></span></label></div>
+    </div>
+    <div class="branch-row visible" id="c-branch-row">
+      <label>בחר סניף לאיסוף</label>
+      <select id="c-branch" onchange="showBranch('c');calcCleaning()">
+        <option value="">-- בחר סניף --</option>
+        <option value="rishon">ראשון לציון – ראשי (מחסן ניקוי)</option>
+        <option value="jerusalem">ירושלים</option>
+        <option value="netanya">נתניה</option>
+        <option value="herzliya">הרצליה</option>
+        <option value="herzliya2">הרצליה – בוטיק</option>
+        <option value="rishon2">ראשון לציון – בוטיק</option>
+        <option value="telaviv">תל אביב – OUTLET</option>
+        <option value="maale">מעלה אדומים – Dcity</option>
+      </select>
+      <div class="branch-detail" id="c-branch-detail"></div>
+    </div>
+    <div class="branch-row" id="c-city-row">
+      <label>בחר עיר לחישוב עלות משלוח</label>
+      <select id="c-city" onchange="calcCleaning()">
+        <option value="0">-- בחר עיר --</option>
+        <option value="90">גוש שרון / מרכז</option>
+        <option value="100">תל אביב</option>
+        <option value="110">פתח תקווה / רמלה / לוד</option>
+        <option value="120">רמת גן / גבעתיים / בני ברק</option>
+        <option value="120">ראשון לציון / חולון / בת ים</option>
+        <option value="130">הרצליה / רעננה / כפר סבא</option>
+        <option value="130">נתניה / חדרה</option>
+        <option value="150">ירושלים</option>
+        <option value="160">חיפה / קריות</option>
+        <option value="180">באר שבע / דרום</option>
+        <option value="200">צפון (נצרת ומעלה)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="total-panel" id="c-total-panel" style="display:none">
+    <div class="total-rows" id="c-total-rows"></div>
+    <div class="total-divider"></div>
+    <div class="total-main"><span class="total-main-label">סה״כ לתשלום</span><span class="total-main-amount" id="c-total-amount">₪0</span></div>
+    <div class="total-vat">* המחיר כולל מע״מ | מינימום הזמנה ₪250</div>
+    <div class="min-notice" id="c-min">⚠️ מינימום הזמנה ₪250 — המחיר יעודכן בהתאם</div>
+  </div>
+  <div class="action-row">
+    <button class="print-btn" onclick="doPrint()">🖨️ הדפס / שמור PDF</button>
+  </div>
+  <p class="summary-note">המחיר הינו אומדן — הצוות שלנו ישמח לאשר עם הגעת השטיח</p>
+</div>
+
+<!-- ═══ REPAIR ═══ -->
+<div id="repair" class="section">
+  <div class="repair-list" id="repair-list"></div>
+  <button class="add-btn" onclick="addCarpet('r')" style="margin-top:0"><span style="font-size:18px;font-weight:300">+</span> הוסף שטיח לתיקון</button>
+  <div class="delivery-section">
+    <h3>סוג שירות</h3>
+    <div class="delivery-grid">
+      <div class="delivery-opt"><input type="radio" name="r-del" id="r-self" checked onchange="updateDelivery('r')"><label for="r-self"><span class="delivery-icon">🏪</span><span><span class="delivery-name">איסוף עצמי</span><span class="delivery-desc">מהסניף שלנו</span></span></label></div>
+      <div class="delivery-opt"><input type="radio" name="r-del" id="r-home" onchange="updateDelivery('r')"><label for="r-home"><span class="delivery-icon">🚚</span><span><span class="delivery-name">שירות עד הבית</span><span class="delivery-desc">איסוף + החזרה</span></span></label></div>
+    </div>
+    <div class="branch-row visible" id="r-branch-row">
+      <label>בחר סניף לאיסוף</label>
+      <select id="r-branch" onchange="showBranch('r');calcRepair()">
+        <option value="">-- בחר סניף --</option>
+        <option value="rishon">ראשון לציון – ראשי (מחסן ניקוי)</option>
+        <option value="jerusalem">ירושלים</option>
+        <option value="netanya">נתניה</option>
+        <option value="herzliya">הרצליה</option>
+        <option value="herzliya2">הרצליה – בוטיק</option>
+        <option value="rishon2">ראשון לציון – בוטיק</option>
+        <option value="telaviv">תל אביב – OUTLET</option>
+        <option value="maale">מעלה אדומים – Dcity</option>
+      </select>
+      <div class="branch-detail" id="r-branch-detail"></div>
+    </div>
+    <div class="branch-row" id="r-city-row">
+      <label>בחר עיר לחישוב עלות משלוח</label>
+      <select id="r-city" onchange="calcRepair()">
+        <option value="0">-- בחר עיר --</option>
+        <option value="90">גוש שרון / מרכז</option>
+        <option value="100">תל אביב</option>
+        <option value="110">פתח תקווה / רמלה / לוד</option>
+        <option value="120">רמת גן / גבעתיים / בני ברק</option>
+        <option value="120">ראשון לציון / חולון / בת ים</option>
+        <option value="130">הרצליה / רעננה / כפר סבא</option>
+        <option value="130">נתניה / חדרה</option>
+        <option value="150">ירושלים</option>
+        <option value="160">חיפה / קריות</option>
+        <option value="180">באר שבע / דרום</option>
+        <option value="200">צפון (נצרת ומעלה)</option>
+      </select>
+    </div>
+  </div>
+  <div class="total-panel" id="r-total-panel" style="display:none">
+    <div class="total-rows" id="r-total-rows"></div>
+    <div class="total-divider"></div>
+    <div class="total-main"><span class="total-main-label">סה״כ לתשלום</span><span class="total-main-amount" id="r-total-amount">₪0</span></div>
+    <div class="total-vat">* המחיר הינו אומדן</div>
+    <div class="min-notice" id="r-min">⚠️ מינימום הזמנה ₪250</div>
+  </div>
+  <div class="action-row">
+    <button class="print-btn" onclick="doPrint()">🖨️ הדפס / שמור PDF</button>
+  </div>
+  <p class="summary-note">המחיר הינו אומדן — הצוות שלנו ישמח לאשר עם הגעת השטיח</p>
+</div>
+
+</div>
+<script>
+// ─── LOAD CONFIG FROM ADMIN ────────────────────────────────────────────
+function loadAdminCfg(){
+  try{ return JSON.parse(localStorage.getItem('tzemer_admin_cfg'))||null; }catch{ return null; }
+}
+const _ADMIN = loadAdminCfg();
+const _G  = _ADMIN?.general        || {};
+const _V  = _ADMIN?.visibility     || {};
+const _CP = _ADMIN?.cleaningPrices || {};
+const _RP = _ADMIN?.repairPrices   || {};
+const _DP = _ADMIN?.deliveryPrices || null;
+const _DC = _ADMIN?.discounts      || null;
+
+const MIN     = _G.minOrder  || 250;
+const MIN_SIDE= _G.minSide   || 100;
+const DISC    = (_DC||[{n:3,p:5,label:'הנחת 3+ שטיחים (-5%)'},{n:5,p:10,label:'הנחת 5+ שטיחים (-10%)'}])
+                .map(d=>({n:d.n,p:d.p,l:d.label}));
+
+const BRANCHES={
+  rishon:{name:'ראשון לציון – ראשי',addr:'רחוב הרצל 123, ראשון לציון',phone:'08-940-0000',hours:'א-ה 09:00-19:00 | ו 09:00-14:00'},
+  jerusalem:{name:'ירושלים',addr:'רחוב יפו 45, ירושלים',phone:'02-500-0000',hours:'א-ה 09:00-19:00 | ו 09:00-14:00'},
+  netanya:{name:'נתניה',addr:'שדרות ויצמן 10, נתניה',phone:'09-880-0000',hours:'א-ה 09:00-19:00 | ו 09:00-14:00'},
+  herzliya:{name:'הרצליה',addr:'רחוב סוקולוב 5, הרצליה',phone:'09-950-0000',hours:'א-ה 09:00-19:00 | ו 09:00-14:00'},
+  herzliya2:{name:'הרצליה – בוטיק',addr:'רחוב הסיבים 1, הרצליה פיתוח',phone:'09-950-0001',hours:'א-ה 10:00-19:00 | ו 10:00-14:00'},
+  rishon2:{name:'ראשון לציון – בוטיק',addr:'שדרות רוטשילד 8, ראשון לציון',phone:'08-940-0001',hours:'א-ה 10:00-19:00 | ו 10:00-14:00'},
+  telaviv:{name:'תל אביב – OUTLET',addr:'רחוב הברזל 20, תל אביב',phone:'03-760-0000',hours:'א-ה 09:00-19:00 | ו 09:00-14:00'},
+  maale:{name:'מעלה אדומים – Dcity',addr:'Dcity מעלה אדומים',phone:'02-590-0000',hours:'א-ה 10:00-20:00 | ו 09:00-15:00'},
+};
+
+const C_TYPES=[
+  {id:'machine',name:'עבודת מכונה',price:_CP.machine||95},
+  {id:'hand',   name:'עבודת יד',   price:_CP.hand   ||135},
+  {id:'silk',   name:'משי',         price:_CP.silk   ||190},
+];
+const C_SVCS=[
+  {id:'urine',name:'חיטוי ריח שתן',ppm:_CP.urine||60, fixed:false,  show:_V.svcUrine!==false},
+  {id:'stain',name:'טיפול בכתם',   ppm:0,             fixed:true,fp:_CP.stain||750, show:_V.svcStain!==false},
+  {id:'flood',name:'תוספת להצפה',  ppm:_CP.flood||50, fixed:false,  show:_V.svcFlood!==false},
+];
+const _RN = _ADMIN?.repairNames || {};
+function _rn(id, def){ return _RN[id]!==undefined ? _RN[id] : def; }
+// billing: 'sqm'=area, 'sides4'=up to 4 sides (linear m), 'sides2'=up to 2 sides, 'fixed'=flat price
+const R_CATS=[
+  {cat:'עבודות סרט', billing:'sides4', svcs:[
+    {id:'t1',name:_rn('t1','הדבקת סרט / סרט חם לקנט'),ppm:_RP.t1||60},
+    {id:'t2',name:_rn('t2','סרט P.V.C תפור (עבודת יד)'),ppm:_RP.t2||100},
+    {id:'t3',name:_rn('t3','סרט חיבור סרט חם'),ppm:_RP.t3||75},
+    {id:'t4',name:_rn('t4','סרט לשטיח מכונה'),ppm:_RP.t4||100},
+    {id:'t5',name:_rn('t5','סרט יוטה'),ppm:_RP.t5||100},
+  ]},
+  {cat:'תיקון ורסטורציה', billing:'sqm', svcs:[
+    {id:'r1',name:_rn('r1','מתיחה'),ppm:_RP.r1||360},
+    {id:'r2',name:_rn('r2','רסטורציה צמר'),ppm:_RP.r2||950},
+    {id:'r3',name:_rn('r3','רסטורציה משי'),ppm:_RP.r3||1150},
+    {id:'r4',name:_rn('r4','טיפול ברקע צהוב'),ppm:_RP.r4||280},
+    {id:'r5',name:_rn('r5','חיזוק ראש'),ppm:_RP.r5||350,billing:'sides4'},
+  ]},
+  {cat:'חיתוך ותפירה', billing:'sides4', svcs:[
+    {id:'c1',name:_rn('c1','חיתוך פרעושים / עש'),ppm:_RP.c1||75},
+    {id:'c2',name:_rn('c2','חיתוך שטיח שאגי / ע״י'),ppm:_RP.c2||160},
+    {id:'c3',name:_rn('c3','חיתוך שטיח רגיל'),ppm:_RP.c3||35},
+  ]},
+  {cat:'עבודות פרנזים', billing:'sides4', svcs:[
+    {id:'f1',name:_rn('f1','הלבנת פרנזים'),ppm:_RP.f1||60},
+    {id:'f2',name:_rn('f2','פרנז יד / צמר / כותנה'),ppm:_RP.f2||580},
+    {id:'f3',name:_rn('f3','פרנז מקורי'),ppm:_RP.f3||780},
+  ]},
+  {cat:'תפירת פינות', billing:'fixed', svcs:[
+    {id:'p1',name:_rn('p1','תפירת 4 פינות עור'),ppm:0,fixed:true,fp:_RP.p1||280},
+  ]},
+  {cat:'עבודות גיזוז', billing:'sqm', svcs:[
+    {id:'g1',name:_rn('g1','גיזוז חוטים בולטים'),ppm:_RP.g1||200},
+  ]},
+];
+
+// Apply visibility from admin
+function applyVisibility(){
+  // tabs
+  const cleanTab=document.querySelector('.tab-btn:nth-child(1)');
+  const repairTab=document.querySelector('.tab-btn:nth-child(2)');
+  if(cleanTab&&_V.cleaning===false){cleanTab.style.display='none';}
+  if(repairTab&&_V.repair===false){repairTab.style.display='none'; switchTab('cleaning');}
+  // delivery option
+  if(_V.delivery===false) document.querySelectorAll('.delivery-opt:nth-child(2)').forEach(e=>e.style.display='none');
+  // branches
+  if(_V.branches===false) document.querySelectorAll('.branch-row').forEach(e=>e.style.display='none');
+  // print btn
+  if(_V.print===false) document.querySelectorAll('.print-btn').forEach(e=>e.style.display='none');
+  // preview
+  if(_V.preview===false) document.querySelectorAll('.carpet-preview').forEach(e=>e.style.display='none');
+  // footnote
+  if(_G.footnote) document.querySelectorAll('.summary-note').forEach(e=>e.textContent=_G.footnote);
+  // delivery city options — rebuild from admin prices
+  if(_DP){
+    ['c-city','r-city'].forEach(selId=>{
+      const sel=document.getElementById(selId);
+      if(!sel)return;
+      sel.innerHTML='<option value="0">-- בחר עיר --</option>';
+      _DP.forEach(c=>sel.innerHTML+=`<option value="${c.price}">${c.name}</option>`);
+    });
+  }
+}
+
+let cId=0, rId=0;
+
+function switchTab(t){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',(i===0&&t==='cleaning')||(i===1&&t==='repair')));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(t).classList.add('active');
+}
+
+function upPrev(id,p){
+  const l=parseFloat(document.getElementById(`${p}-len-${id}`)?.value)||0;
+  const w=parseFloat(document.getElementById(`${p}-wid-${id}`)?.value)||0;
+  const svg=document.getElementById(`psvg-${p}-${id}`);
+  const lbl=document.getElementById(`plbl-${p}-${id}`);
+  if(!svg)return;
+  const M=76;
+  let rw,rh;
+  if(l===0&&w===0){rw=M;rh=Math.round(M*.75);}
+  else if(l>=w){rw=M;rh=Math.max(8,Math.round(M*(w/l)));}
+  else{rh=M;rw=Math.max(8,Math.round(M*(l/w)));}
+  svg.setAttribute('viewBox',`0 0 ${rw} ${rh}`);
+  svg.setAttribute('width',rw);svg.setAttribute('height',rh);
+  svg.querySelector('rect').setAttribute('width',rw);
+  svg.querySelector('rect').setAttribute('height',rh);
+  if(lbl)lbl.textContent=(l>0&&w>0)?`${l}×${w} ס״מ`:'הזן מידות';
+}
+
+function mkPrev(id,p){
+  const col=p==='c'?'c9a84c':'d4763b';
+  return `<div class="carpet-preview">
+    <div class="preview-box">
+      <svg id="psvg-${p}-${id}" width="76" height="57" viewBox="0 0 76 57">
+        <defs><linearGradient id="g${p}${id}" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#${col}" stop-opacity=".65"/>
+          <stop offset="100%" stop-color="#${p==='c'?'7a6330':'9a4e1a'}" stop-opacity=".4"/>
+        </linearGradient></defs>
+        <rect width="76" height="57" rx="5" fill="url(#g${p}${id})" stroke="#${col}" stroke-width="1.5"/>
+      </svg>
+    </div>
+    <div class="preview-label" id="plbl-${p}-${id}">הזן מידות</div>
+  </div>`;
+}
+
+function addCarpet(p){
+  if(p==='c'){
+    const id=++cId;
+    const tOpts=C_TYPES.map(t=>`<div class="type-opt"><input type="radio" name="ct-${id}" id="ct${id}-${t.id}" value="${t.price}" ${t.id==='machine'?'checked':''} onchange="calcCleaning()"><label for="ct${id}-${t.id}"><span class="type-name">${t.name}</span><span class="type-price">₪${t.price}/מ״ר</span></label></div>`).join('');
+    const sOpts=C_SVCS.filter(s=>s.show!==false).map(s=>`<div class="svc-opt"><input type="checkbox" id="cs${id}-${s.id}" onchange="calcCleaning()"><label for="cs${id}-${s.id}"><span class="chk">✓</span><span><span class="svc-name">${s.name}</span><span class="svc-price-lbl">${s.fixed?'₪'+s.fp+' סה״כ':'₪'+s.ppm+'/מ״ר'}</span></span></label></div>`).join('');
+    document.getElementById('cleaning-list').insertAdjacentHTML('beforeend',`
+      <div class="carpet-card" id="c-card-${id}">
+        <div class="carpet-card-header"><span class="carpet-num">שטיח מס׳ ${id}</span>${id>1?`<button class="remove-btn" onclick="rmC('c',${id})">✕</button>`:''}</div>
+        <div class="dims-preview-row">
+          <div>
+            <div class="dims-inputs">
+              <div class="field"><label>אורך (ס״מ)</label><input type="number" id="c-len-${id}" placeholder="200" min="0" oninput="upPrev(${id},'c');calcCleaning()"></div>
+              <div class="field"><label>רוחב (ס״מ)</label><input type="number" id="c-wid-${id}" placeholder="150" min="0" oninput="upPrev(${id},'c');calcCleaning()"></div>
+              <div class="area-info"><span class="area-lbl">שטח בפועל</span><span class="area-val" id="c-area-${id}">0.00 מ״ר</span></div>
+            </div>
+          </div>
+          ${mkPrev(id,'c')}
+        </div>
+        <div class="type-grid">${tOpts}</div>
+        <p class="services-title">שירותים נוספים לניקוי</p>
+        <div class="services-grid">${sOpts}</div>
+        <div class="card-subtotal"><span class="card-subtotal-label">עלות שטיח זה</span><span class="card-subtotal-amount" id="c-sub-${id}">₪0</span></div>
+        <div id="c-bill-note-${id}" style="display:none;font-size:11px;color:var(--accent);margin-top:6px;padding:6px 10px;background:rgba(212,118,59,.08);border-radius:6px;border:1px solid rgba(212,118,59,.25)"></div>
+      </div>`);
+  } else {
+    const id=++rId;
+    let sh='';
+    R_CATS.forEach(cat=>{
+      const billing=cat.billing||'sqm';
+      const unitLabel = billing==='sqm' ? '/מ״ר' : billing==='fixed' ? '' : '/מ׳ (לפי צלעות)';
+      sh+=`<div class="rsvc-category">${cat.cat}</div>`;
+      cat.svcs.forEach(s=>{
+        const sBilling=s.billing||billing;
+        const sUnitLabel=sBilling==='sqm'?'/מ״ר':sBilling==='fixed'?'':'/מ״ (לפי צלעות)';
+        const pl=s.fixed?`₪${s.fp} לאיחוד`:`₪${s.ppm}${sUnitLabel}`;
+        sh+=`<div class="rsvc-opt">
+          <input type="checkbox" id="rs${id}-${s.id}" onchange="toggleSideSelector(${id},'${s.id}','${sBilling}');calcRepair()">
+          <label for="rs${id}-${s.id}">
+            <span class="rsvc-left"><span class="rsvc-check">✓</span><span class="rsvc-name">${s.name}</span></span>
+            <span class="rsvc-price-badge">${pl}</span>
+          </label>
+        </div>
+        <div class="side-selector" id="ss${id}-${s.id}" data-billing="${sBilling}" data-ppm="${s.ppm||0}" data-fp="${s.fp||0}" data-fixed="${s.fixed||false}">
+          <div class="side-sel-title">בחר צלעות לעיבוד <span id="ss-total${id}-${s.id}"></span></div>
+          <div class="sides-grid four" id="sg${id}-${s.id}"></div>
+          <div class="side-total-note" id="sn${id}-${s.id}"></div>
+        </div>`;
+      });
+    });
+    document.getElementById('repair-list').insertAdjacentHTML('beforeend',`
+      <div class="repair-card" id="r-card-${id}">
+        <div class="carpet-card-header"><span class="carpet-num">שטיח תיקון מס׳ ${id}</span>${id>1?`<button class="remove-btn" onclick="rmC('r',${id})">✕</button>`:''}</div>
+        <div class="dims-preview-row">
+          <div class="dims-inputs">
+            <div class="field"><label>אורך (ס״מ)</label><input type="number" id="r-len-${id}" placeholder="200" min="0" oninput="upPrev(${id},'r');refreshSideLabels(${id});calcRepair()"></div>
+            <div class="field"><label>רוחב (ס״מ)</label><input type="number" id="r-wid-${id}" placeholder="150" min="0" oninput="upPrev(${id},'r');refreshSideLabels(${id});calcRepair()"></div>
+          </div>
+          ${mkPrev(id,'r')}
+        </div>
+        <div class="repair-services">${sh}</div>
+        <div class="repair-card-subtotal"><span class="cs-label">עלות שטיח זה</span><span class="cs-amt" id="r-sub-${id}">₪0</span></div>
+      </div>`);
+  }
+}
+
+function rmC(p,id){document.getElementById(`${p}-card-${id}`).remove();p==='c'?calcCleaning():calcRepair();}
+
+function calcCleaning(){
+  const ids=[...document.querySelectorAll('[id^="c-card-"]')].map(e=>+e.id.replace('c-card-',''));
+  let grand=0;const rows=[];
+  ids.forEach(id=>{
+    const l=parseFloat(document.getElementById(`c-len-${id}`)?.value)||0;
+    const w=parseFloat(document.getElementById(`c-wid-${id}`)?.value)||0;
+    // real area shown to user
+    const sqmReal=(l*w)/10000;
+    const aEl=document.getElementById(`c-area-${id}`);if(aEl)aEl.textContent=sqmReal.toFixed(2)+' מ״ר';
+    // billing area: each side minimum 100cm
+    const lBill=Math.max(l,100);
+    const wBill=Math.max(w,100);
+    const sqm=(lBill*wBill)/10000;
+    // show billing notice if rounded up
+    const billNote=document.getElementById(`c-bill-note-${id}`);
+    if(billNote){
+      if(lBill!==l||wBill!==w){
+        billNote.textContent=`* חיוב לפי ${lBill}×${wBill} ס״מ (מינימום ${MIN_SIDE} ס״מ לכל צלע)`;
+        billNote.style.display='block';
+      } else { billNote.style.display='none'; }
+    }
+    const tp=document.querySelector(`input[name="ct-${id}"]:checked`);
+    let sub=sqm*(tp?+tp.value:95);
+    C_SVCS.forEach(s=>{const cb=document.getElementById(`cs${id}-${s.id}`);if(cb&&cb.checked)sub+=s.fixed?s.fp:sqm*s.ppm;});
+    const se=document.getElementById(`c-sub-${id}`);if(se)se.textContent='₪'+Math.round(sub).toLocaleString('he-IL');
+    if(sqmReal>0)rows.push({l:`שטיח מס׳ ${id} (${sqmReal.toFixed(2)} מ״ר)`,v:sub});
+    grand+=sub;
+  });
+  let disc=0,discL='';
+  DISC.slice().reverse().forEach(d=>{if(ids.length>=d.n&&!disc){disc=Math.round(grand*d.p/100);discL=d.l;}});
+  const after=grand-disc;
+  const isH=document.getElementById('c-home')?.checked;
+  const del=isH?(+document.getElementById('c-city')?.value||0):0;
+  const final=Math.max(after,after>0?MIN:0)+del;
+  const re=document.getElementById('c-total-rows');
+  re.innerHTML=rows.map(r=>`<div class="total-row"><span class="tr-label">${r.l}</span><span class="tr-val">₪${Math.round(r.v).toLocaleString('he-IL')}</span></div>`).join('')
+    +(disc?`<div class="total-row disc-row"><span class="tr-label">🎉 ${discL}</span><span class="tr-val">-₪${disc.toLocaleString('he-IL')}</span></div>`:'')
+    +(del?`<div class="total-row del-row"><span class="tr-label">🚚 משלוח</span><span class="tr-val">₪${del}</span></div>`:'');
+  document.getElementById('c-total-amount').textContent='₪'+Math.round(final).toLocaleString('he-IL');
+  document.getElementById('c-total-panel').style.display=grand>0?'block':'none';
+  document.getElementById('c-min').classList.toggle('visible',after>0&&after<MIN);
+}
+
+// Get selected sides total length (m) for a service
+function getSidesMeters(cardId, svcId, billing, l, w){
+  if(billing==='sqm'||billing==='fixed') return 0; // not used for these
+  const lM=l/100, wM=w/100;
+  // sides: L1=long1, L2=long2, S1=short1, S2=short2
+  // long sides have length = max(l,w), short = min(l,w)
+  const longM = Math.max(lM,wM), shortM = Math.min(lM,wM);
+  const sideMap = [{key:'A',m:longM},{key:'B',m:longM},{key:'C',m:shortM},{key:'D',m:shortM}];
+  let total=0;
+  sideMap.forEach(s=>{
+    const btn=document.getElementById(`sb-${cardId}-${svcId}-${s.key}`);
+    if(btn&&btn.classList.contains('active')) total+=s.m;
+  });
+  return total;
+}
+
+function toggleSideSelector(cardId, svcId, billing){
+  const cb=document.getElementById(`rs${cardId}-${svcId}`);
+  const ss=document.getElementById(`ss${cardId}-${svcId}`);
+  if(!ss)return;
+  if(!cb.checked){ ss.classList.remove('visible'); return; }
+  if(billing==='sqm'||billing==='fixed'){ ss.classList.remove('visible'); return; }
+  ss.classList.add('visible');
+  // build buttons for this specific service immediately
+  buildSideButtons(cardId, svcId, billing);
+  calcRepair();
+}
+
+function buildSideButtons(cardId, svcId, billing){
+  const l=parseFloat(document.getElementById(`r-len-${cardId}`)?.value)||0;
+  const w=parseFloat(document.getElementById(`r-wid-${cardId}`)?.value)||0;
+  const longCm=Math.max(l,w), shortCm=Math.min(l,w);
+  const longM=(longCm/100).toFixed(2), shortM=(shortCm/100).toFixed(2);
+  const sg=document.getElementById(`sg${cardId}-${svcId}`);
+  if(!sg) return;
+  // preserve existing active state
+  const keys=['A','B','C','D'];
+  const active={};
+  keys.forEach(k=>{ const b=document.getElementById(`sb-${cardId}-${svcId}-${k}`); active[k]=b?b.classList.contains('active'):null; });
+  const noneChosen=Object.values(active).every(v=>v===null||v===false);
+  const sides=[
+    {key:'A',label:'צלע ארוכה 1',m:longM},
+    {key:'B',label:'צלע ארוכה 2',m:longM},
+    {key:'C',label:'צלע קצרה 1',m:shortM},
+    {key:'D',label:'צלע קצרה 2',m:shortM}
+  ];
+  sg.innerHTML=sides.map(sd=>{
+    const isActive = noneChosen ? (sd.key==='A'||sd.key==='B') : (active[sd.key]||false);
+    return `<div class="side-btn${isActive?' active':''}" id="sb-${cardId}-${svcId}-${sd.key}"
+      onclick="toggleSide('${cardId}','${svcId}','${sd.key}')">${sd.label}<span class="sb-len">${sd.m} מ׳</span></div>`;
+  }).join('');
+  // find ppm from dataset
+  const ss=document.getElementById(`ss${cardId}-${svcId}`);
+  const ppm=parseFloat(ss?.dataset?.ppm||0);
+  updateSideNote(cardId, svcId, billing, ppm);
+}
+
+function refreshSideLabels(cardId){
+  // rebuild all visible side-selectors for this card using buildSideButtons
+  R_CATS.forEach(cat=>{
+    const catBilling=cat.billing||'sqm';
+    cat.svcs.forEach(s=>{
+      const sBilling=s.billing||catBilling;
+      if(sBilling==='sqm'||sBilling==='fixed') return;
+      const ss=document.getElementById(`ss${cardId}-${s.id}`);
+      if(!ss||!ss.classList.contains('visible')) return;
+      buildSideButtons(cardId, s.id, sBilling);
+    });
+  });
+  calcRepair();
+}
+
+function toggleSide(cardId, svcId, key){
+  const btn=document.getElementById(`sb-${cardId}-${svcId}-${key}`);
+  if(btn) btn.classList.toggle('active');
+  const ss=document.getElementById(`ss${cardId}-${svcId}`);
+  const billing=ss?.dataset.billing||'sqm';
+  const ppm=parseFloat(ss?.dataset.ppm||0);
+  updateSideNote(cardId, svcId, billing, ppm);
+  calcRepair();
+}
+
+function updateSideNote(cardId, svcId, billing, ppm){
+  const l=parseFloat(document.getElementById(`r-len-${cardId}`)?.value)||0;
+  const w=parseFloat(document.getElementById(`r-wid-${cardId}`)?.value)||0;
+  const meters=getSidesMeters(cardId, svcId, billing, l, w);
+  const cost=Math.round(meters*ppm);
+  const noteEl=document.getElementById(`sn${cardId}-${svcId}`);
+  const totalEl=document.getElementById(`ss-total${cardId}-${svcId}`);
+  if(meters>0){
+    if(noteEl) noteEl.textContent=`סה״כ: ${meters.toFixed(2)} מ׳ × ₪${ppm} = ₪${cost.toLocaleString('he-IL')}`;
+    if(totalEl) totalEl.textContent=`₪${cost.toLocaleString('he-IL')}`;
+  } else {
+    if(noteEl) noteEl.textContent='';
+    if(totalEl) totalEl.textContent='';
+  }
+}
+
+function calcRepair(){
+  const ids=[...document.querySelectorAll('[id^="r-card-"]')].map(e=>+e.id.replace('r-card-',''));
+  let grand=0;const rows=[];
+  ids.forEach(id=>{
+    const l=parseFloat(document.getElementById(`r-len-${id}`)?.value)||0;
+    const w=parseFloat(document.getElementById(`r-wid-${id}`)?.value)||0;
+    const sqmReal=(l*w)/10000;
+    const lBill=Math.max(l,MIN_SIDE), wBill=Math.max(w,MIN_SIDE);
+    const sqm=(lBill*wBill)/10000;
+    let sub=0;
+    R_CATS.forEach(cat=>{
+      const catBilling=cat.billing||'sqm';
+      cat.svcs.forEach(s=>{
+        const billing=s.billing||catBilling;
+        const cb=document.getElementById(`rs${id}-${s.id}`);
+        if(!cb||!cb.checked) return;
+        if(s.fixed){ sub+=s.fp; return; }
+        if(billing==='sqm'){ sub+=sqm*s.ppm; return; }
+        // sides billing — sum selected sides
+        const meters=getSidesMeters(id, s.id, billing, l, w);
+        sub+=meters*s.ppm;
+      });
+    });
+    const se=document.getElementById(`r-sub-${id}`);if(se)se.textContent='₪'+Math.round(sub).toLocaleString('he-IL');
+    if(sub>0)rows.push({l:`שטיח מס׳ ${id} (${sqmReal.toFixed(2)} מ״ר)`,v:sub});
+    grand+=sub;
+  });
+  const isH=document.getElementById('r-home')?.checked;
+  const del=isH?(+document.getElementById('r-city')?.value||0):0;
+  const re=document.getElementById('r-total-rows');
+  re.innerHTML=rows.map(r=>`<div class="total-row"><span class="tr-label">${r.l}</span><span class="tr-val">₪${Math.round(r.v).toLocaleString('he-IL')}</span></div>`).join('')
+    +(del?`<div class="total-row del-row"><span class="tr-label">🚚 משלוח</span><span class="tr-val">₪${del}</span></div>`:'');
+  document.getElementById('r-total-amount').textContent='₪'+Math.round(grand+del).toLocaleString('he-IL');
+  document.getElementById('r-total-panel').style.display=grand>0?'block':'none';
+}
+
+function updateDelivery(p){
+  const isH=document.getElementById(`${p}-home`)?.checked;
+  document.getElementById(`${p}-branch-row`).classList.toggle('visible',!isH);
+  document.getElementById(`${p}-city-row`).classList.toggle('visible',isH);
+  p==='c'?calcCleaning():calcRepair();
+}
+
+function showBranch(p){
+  const v=document.getElementById(`${p}-branch`)?.value;
+  const det=document.getElementById(`${p}-branch-detail`);
+  if(!det)return;
+  if(v&&BRANCHES[v]){const b=BRANCHES[v];det.innerHTML=`<strong>📍 ${b.addr}</strong>📞 ${b.phone} &nbsp;|&nbsp; 🕐 ${b.hours}`;det.classList.add('visible');}
+  else det.classList.remove('visible');
+}
+
+function sendWA(p){
+  const isC=p==='c';
+  const total=document.getElementById(isC?'c-total-amount':'r-total-amount')?.textContent||'—';
+  const ids=[...document.querySelectorAll(`[id^="${p}-card-"]`)].map(e=>+e.id.replace(`${p}-card-`,''));
+  const lines=ids.map(id=>{
+    const l=document.getElementById(`${p}-len-${id}`)?.value||'?';
+    const w=document.getElementById(`${p}-wid-${id}`)?.value||'?';
+    return `• שטיח ${id}: ${l}×${w} ס״מ`;
+  });
+  const msg=`שלום! אני מעוניין/ת בשירות ${isC?'ניקוי':'תיקון'} שטיחים.\n\n${lines.join('\n')}\n\nסה״כ אומדן: ${total}\n\nאנא צרו איתי קשר. תודה!`;
+  window.open('https://wa.me/9721800700080?text='+encodeURIComponent(msg),'_blank');
+}
+
+function doPrint(){
+  document.getElementById('print-date').textContent='תאריך: '+new Date().toLocaleDateString('he-IL');
+  window.print();
+}
+
+// Init
+addCarpet('c'); addCarpet('r');
+applyVisibility();
+</script>
+</body>
+</html>
